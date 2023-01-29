@@ -1,20 +1,28 @@
 ﻿<style></style>
 @model Assignment1.Models.CreateImage
 @{
-    ViewBag.Title = "Images";
+    ViewBag.Title = "Images with Description";
 }
-
 
     <p class="inner" id ="p" style="display:none;">
         @Model.Description
     </p>
+<p id="container" class="inner" style="display:none;">
+    <button type="submit" id="edit-button">Edit</button>
+</p>
 <p onclick = "fun()" id = "btn">  
 <img src="@Model.Url" width="300" height="300">  
 </p>
 <script>
 function fun() {
 document.getElementById("p").style.display = "block";
+document.getElementById("container").style.display = "block";
+
 }
 </script>
+
+
+
+
    
 
