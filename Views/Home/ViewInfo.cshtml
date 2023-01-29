@@ -1,0 +1,9 @@
+﻿@model Assignment1.Models.FormDetails
+@{
+    ViewBag.Title = "User Details";
+}
+
+@using (Html.BeginForm(new { controller = "Home", action = "DisplayCountry", Country = @Model.Country }))
+{
+    <input type="submit" value=@Html.DisplayFor(modelItem=>@Model.Name)>
+}

@@ -1,0 +1,27 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model FormDetails;
+@{
+    ViewData["Title"] = "Create a Form";
+}
+<h2>Enter Your Details</h2>
+
+@using (Html.BeginForm())
+{
+    <div>
+        @Html.LabelFor(m=>m.Name)<br />
+        @Html.TextBoxFor(m=>m.Name)
+        @Html.ValidationMessageFor(m=>m.Name,"",new{@class = "error"})
+    </div>
+    <br />
+    <div>
+        @Html.LabelFor(m=>m.Country)<br />
+        @Html.TextBoxFor(m=>m.Country,"",htmlAttributes:new {@class="required"})
+        @Html.ValidationMessageFor(m=>m.Country,"",new{@class = "error"})
+    </div>
+    <br />
+
+    <input type="submit" value="Submit" />
+
+}

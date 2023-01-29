@@ -1,0 +1,20 @@
+﻿<style></style>
+@model Assignment1.Models.CreateImage
+@{
+    ViewBag.Title = "Images";
+}
+
+
+    <p class="inner" id ="p" style="display:none;">
+        @Model.Description
+    </p>
+<p onclick = "fun()" id = "btn">  
+<img src="@Model.Url" width="300" height="300">  
+</p>
+<script>
+function fun() {
+document.getElementById("p").style.display = "block";
+}
+</script>
+   
+
