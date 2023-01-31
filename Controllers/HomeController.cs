@@ -222,7 +222,7 @@ namespace Assignment1.Controllers
         }
    
         [HttpPost]
-        public IActionResult NewDescription(string Id, string NewDesc)
+        public IActionResult NewDescription(string EditId, string NewDesc)
         {
             MongoClient Client = new MongoClient("mongodb://localhost:27017");
             var db = Client.GetDatabase("Images");
@@ -237,7 +237,7 @@ namespace Assignment1.Controllers
                         { "copyrighted", true }
         }
             };
-            ObjectId.TryParse(Id, out ObjectId oid);
+            ObjectId.TryParse(EditId, out ObjectId oid);
             var filter = Builders<BsonDocument>.Filter.Eq("Id", oid);
             var doc = collect.Find(filter).FirstOrDefault();
             collect.DeleteOne(filter);
