@@ -172,22 +172,80 @@ namespace Assignment1.Controllers
             var collection = database.GetCollection<BsonDocument>("data");
             var dbList = collection.Find(new BsonDocument()).ToList();
             BsonDocument doc = new BsonDocument();
+            CreateImage ImageData = new CreateImage();
             List<CreateImage> ImageList = new List<CreateImage>();
             foreach (var item in dbList)
             {
                 doc = item;
-               
+                var Id = doc["Id"];
+                var byteArray = bucket.DownloadAsBytes(Id);
+                string Image = Convert.ToBase64String(byteArray);
+                ImageData.Url = string.Format("data:image/png;base64,{0}", Image);
+                ImageData.Description = doc["Description"].ToString();
+                ImageData.EditId = (ObjectId)Id;
+                ImageList.Add(ImageData);
             }
-            var Id = doc["Id"];
-            var byteArray = bucket.DownloadAsBytes(Id);
-            string Image = Convert.ToBase64String(byteArray);
-            string Url = string.Format("data:image/png;base64,{0}", Image);
-           CreateImage ImageData=new CreateImage();
-            ImageData.Url = Url;
-            ImageData.Description  = doc["Description"].ToString();
             return View(ImageData);
         }
-        
+
+        [HttpPost]
+        public IActionResult NewImage(string EditId, CreateImage item)
+        {
+
+            MongoClient dbClient = new MongoClient("mongodb://localhost:27017");
+            var database = dbClient.GetDatabase("Images");
+            var collection = database.GetCollection<BsonDocument>("data");
+            GridFSBucket bucket = new GridFSBucket(database);
+            var options = new GridFSUploadOptions
+            {
+                ChunkSizeBytes = 516096, // 504KB
+                Metadata = new BsonDocument
+        {
+            { "resolution", "1080P" },
+            { "copyrighted", true }
+        }
+            };
+            ObjectId.TryParse(EditId, out ObjectId id);
+            var filter = Builders<BsonDocument>.Filter.Eq("Id", id);
+            var doc = collection.Find(filter).FirstOrDefault();
+            bucket.Delete(id);
+            collection.DeleteOne(filter);
+            item.Title = doc["Title"].ToString();
+            using var stream = bucket.OpenUploadStream(item.Title, options);
+            item.Image.CopyTo(stream);
+            stream.Close();
+            var document = new BsonDocument { { "Title", doc["Title"].ToString() }, { "Description", doc["Description"].ToString() }, { "Id", stream.Id } };
+            collection.InsertOne(document);
+            return Redirect("/");
+
+
+        }
+   
+        [HttpPost]
+        public IActionResult NewDescription(string Id, string NewDesc)
+        {
+            MongoClient Client = new MongoClient("mongodb://localhost:27017");
+            var db = Client.GetDatabase("Images");
+            var collect = db.GetCollection<BsonDocument>("data");
+            GridFSBucket bucket = new GridFSBucket(db);
+            var options = new GridFSUploadOptions
+            {
+                ChunkSizeBytes = 255 * 1024,
+                Metadata = new BsonDocument
+        {
+            { "resolution", "1080P" },
+                        { "copyrighted", true }
+        }
+            };
+            ObjectId.TryParse(Id, out ObjectId oid);
+            var filter = Builders<BsonDocument>.Filter.Eq("Id", oid);
+            var doc = collect.Find(filter).FirstOrDefault();
+            collect.DeleteOne(filter);
+            var doc1 = new BsonDocument { { "Title", doc["Title"].ToString() }, { "Description", NewDesc }, { "Id", oid } };
+            collect.InsertOne(doc1);
+            return Redirect("/");
+
+        }
 
 
 

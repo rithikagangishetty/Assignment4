@@ -9,6 +9,7 @@ namespace Assignment1.Models
     public class CreateImage
     {
         public ObjectId Id { get; set; }
+        public ObjectId EditId { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string? Url { get; set; }

@@ -4,16 +4,43 @@
     ViewBag.Title = "Images with Description";
 }
 
-    <p class="inner" id ="p" style="display:none;">
-        @Model.Description
-    </p>
-<p id="container" class="inner" style="display:none;">
-    <button type="submit" id="edit-button">Edit</button>
-</p>
+   
 <p onclick = "fun()" id = "btn">  
 <img src="@Model.Url" width="300" height="300">  
 </p>
+
+<p class="inner" id="p" style="display:none;">
+    Description of the Image : @Model.Description
+</p>
+<p id="container" class="inner" style="display:none;">
+
+     @using (Html.BeginForm("NewImage", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <p>
+        <input type="text" name="Id" style="display:none;" value=@Model.EditId.ToString()><br>
+        <input type="file" id="myfile" name="Image" /><br>
+            </p>
+    <button type="submit" id="edit-button">Edit Image</button>
+    <br>
+        }
+        @using (Html.BeginForm("NewDescription", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <p>
+        <input type="text" name="Id" style="display:none;" value=@Model.EditId.ToString()><br>
+        <input type="text" id="NewDescription" name="NewDesc" size="100" /><br>
+       
+        </p>
+    <button type="submit" id="edit-button">Edit Description</button>
+    <br>
+    }
+    
+  
+  
+       
+    
 <script>
+
+
 function fun() {
 document.getElementById("p").style.display = "block";
 document.getElementById("container").style.display = "block";
