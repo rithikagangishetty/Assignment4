@@ -224,10 +224,10 @@ namespace Assignment1.Controllers
         [HttpPost]
         public IActionResult NewDescription(string EditId, string NewDesc)
         {
-            MongoClient Client = new MongoClient("mongodb://localhost:27017");
-            var db = Client.GetDatabase("Images");
-            var collect = db.GetCollection<BsonDocument>("data");
-            GridFSBucket bucket = new GridFSBucket(db);
+            MongoClient dbClient = new MongoClient("mongodb://localhost:27017");
+            var database = dbClient.GetDatabase("Images");
+            var collection = database.GetCollection<BsonDocument>("data");
+            GridFSBucket bucket = new GridFSBucket(database);
             var options = new GridFSUploadOptions
             {
                 ChunkSizeBytes = 255 * 1024,
@@ -239,10 +239,8 @@ namespace Assignment1.Controllers
             };
             ObjectId.TryParse(EditId, out ObjectId oid);
             var filter = Builders<BsonDocument>.Filter.Eq("Id", oid);
-            var doc = collect.Find(filter).FirstOrDefault();
-            collect.DeleteOne(filter);
-            var doc1 = new BsonDocument { { "Title", doc["Title"].ToString() }, { "Description", NewDesc }, { "Id", oid } };
-            collect.InsertOne(doc1);
+            var update = Builders<BsonDocument>.Update.Set("Description", NewDesc);
+            collection.UpdateOne(filter, update);    
             return Redirect("/");
 
         }
