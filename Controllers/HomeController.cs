@@ -216,7 +216,8 @@ namespace Assignment1.Controllers
             stream.Close();
             var document = new BsonDocument { { "Title", doc["Title"].ToString() }, { "Description", doc["Description"].ToString() }, { "Id", stream.Id } };
             collection.InsertOne(document);
-            return Redirect("/");
+            var redirect = "https://localhost:7256/Home/DisplayContent";
+            return Redirect(redirect);
 
 
         }
@@ -228,20 +229,12 @@ namespace Assignment1.Controllers
             var database = dbClient.GetDatabase("Images");
             var collection = database.GetCollection<BsonDocument>("data");
             GridFSBucket bucket = new GridFSBucket(database);
-            var options = new GridFSUploadOptions
-            {
-                ChunkSizeBytes = 255 * 1024,
-                Metadata = new BsonDocument
-        {
-            { "resolution", "1080P" },
-                        { "copyrighted", true }
-        }
-            };
             ObjectId.TryParse(EditId, out ObjectId oid);
             var filter = Builders<BsonDocument>.Filter.Eq("Id", oid);
             var update = Builders<BsonDocument>.Update.Set("Description", NewDesc);
-            collection.UpdateOne(filter, update);    
-            return Redirect("/");
+            collection.UpdateOne(filter, update);
+            var redirect = "https://localhost:7256/Home/DisplayContent";
+            return Redirect(redirect);
 
         }
 
